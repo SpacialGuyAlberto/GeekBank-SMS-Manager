@@ -33,16 +33,30 @@ public class SmsReceiver extends BroadcastReceiver {
 
                 Log.d(TAG, "SMS from " + phoneNumber + " : " + messageBody);
 
-                // Insertar mensaje en la base de datos
+                // Insertar mensaje en la base de datos con received = 1 y sent = 0
                 ContentValues values = new ContentValues();
                 values.put(DatabaseHelper.COLUMN_PHONE_NUMBER, phoneNumber);
                 values.put(DatabaseHelper.COLUMN_MESSAGE_BODY, messageBody);
                 values.put(DatabaseHelper.COLUMN_DATE, date);
-                db.insert(DatabaseHelper.TABLE_SMS, null, values);
+                values.put(DatabaseHelper.COLUMN_RECEIVED, 1);
+                values.put(DatabaseHelper.COLUMN_SENT, 0);
+                long id = db.insert(DatabaseHelper.TABLE_SMS, null, values);
 
-                // Enviar mensaje a Telegram
+                // Enviar mensaje a Telegram y actualizar la base de datos si se envió correctamente
                 String formattedMessage = "Message from " + phoneNumber + ": " + messageBody;
-                telegramService.sendToTelegram(context, formattedMessage);
+                telegramService.sendToTelegram(context, formattedMessage, new TelegramService.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        ContentValues sentValues = new ContentValues();
+                        sentValues.put(DatabaseHelper.COLUMN_SENT, 1);
+                        db.update(DatabaseHelper.TABLE_SMS, sentValues, DatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        // Manejar el fallo si es necesario
+                    }
+                });
             }
             db.close();
         }

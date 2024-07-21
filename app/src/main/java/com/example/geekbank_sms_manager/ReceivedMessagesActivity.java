@@ -45,6 +45,14 @@ public class ReceivedMessagesActivity extends AppCompatActivity {
             }
         });
 
+        Button deleteButton = findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAllMessages();
+            }
+        });
+
         Log.d("ReceivedMessagesActivity", "Number of SMS received: " + smsList.size());
     }
 
@@ -64,6 +72,14 @@ public class ReceivedMessagesActivity extends AppCompatActivity {
             cursor.close();
         }
 
+        db.close();
+    }
+
+    private void deleteAllMessages() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(DatabaseHelper.TABLE_SMS, null, null);
+        smsList.clear();
+        smsAdapter.notifyDataSetChanged();
         db.close();
     }
 }

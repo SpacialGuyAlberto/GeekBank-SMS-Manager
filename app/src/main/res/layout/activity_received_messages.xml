@@ -30,6 +30,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Back to Main" />
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete All Messages" />
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

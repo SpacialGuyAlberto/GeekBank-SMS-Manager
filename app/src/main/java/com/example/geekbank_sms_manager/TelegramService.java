@@ -17,11 +17,10 @@ public class TelegramService {
     private static final String TELEGRAM_BOT_TOKEN = "7380701994:AAEjFku13cK8ZatzNch_E8uOZaiFze1IDAE";
     private static final String TELEGRAM_CHAT_ID = "7364032510";
 
-    public void sendToTelegram(Context context, String message) {
+    public void sendToTelegram(Context context, String message, Callback callback) {
         try {
             String encodedMessage = URLEncoder.encode(message, "UTF-8");
-            /* https://api.telegram.org/bot7380701994:AAEjFku13cK8ZatzNch_E8uOZaiFze1IDAE/sendMessage?chat_id=7364032510&text=hello */
-            String url = "https://api.telegram.org/bot7380701994:AAEjFku13cK8ZatzNch_E8uOZaiFze1IDAE/sendMessage?chat_id=7364032510&text=" + encodedMessage;
+            String url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage?chat_id=" + TELEGRAM_CHAT_ID + "&text=" + encodedMessage;
             Log.d(TAG, "URL: " + url); // Imprimir el URL para depuración
 
             RequestQueue queue = Volley.newRequestQueue(context);
@@ -30,16 +29,24 @@ public class TelegramService {
                         @Override
                         public void onResponse(String response) {
                             Log.d(TAG, "Response from Telegram: " + response);
+                            callback.onSuccess();
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d(TAG, "Error: " + error.toString());
+                    callback.onFailure();
                 }
             });
             queue.add(stringRequest);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            callback.onFailure();
         }
+    }
+
+    public interface Callback {
+        void onSuccess();
+        void onFailure();
     }
 }
