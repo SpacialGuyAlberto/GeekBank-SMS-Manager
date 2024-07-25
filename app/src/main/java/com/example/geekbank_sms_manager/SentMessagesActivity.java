@@ -1,8 +1,10 @@
 package com.example.geekbank_sms_manager;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,11 +48,14 @@ public class SentMessagesActivity extends AppCompatActivity {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(DatabaseHelper.TABLE_SMS, null, DatabaseHelper.COLUMN_SENT + "=1", null, null, null, null);
 
+        Log.d("SentMessagesActivity", "Cursor count: " + cursor.getCount()); // Log cursor count
+
         while (cursor.moveToNext()) {
-            String phoneNumber = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PHONE_NUMBER));
-            String messageBody = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MESSAGE_BODY));
-            String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE));
+            @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_PHONE_NUMBER));
+            @SuppressLint("Range") String messageBody = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_MESSAGE_BODY));
+            @SuppressLint("Range") String date = cursor.getString(cursor.getColumnIndex(DatabaseHelper.COLUMN_DATE));
             Sms sms = new Sms(phoneNumber, messageBody, date);
+            Log.d("SentMessagesActivity", "Fetched SMS: " + phoneNumber + ", " + messageBody + ", " + date); // Log fetched SMS
             messages.add(sms);
         }
         cursor.close();

@@ -43,22 +43,24 @@ public class SmsReceiver extends BroadcastReceiver {
                 long id = db.insert(DatabaseHelper.TABLE_SMS, null, values);
 
                 // Enviar mensaje a Telegram y actualizar la base de datos si se envió correctamente
-                String formattedMessage = "Message from " + phoneNumber + ": " + messageBody;
+                String formattedMessage = "/Message from " + phoneNumber + ": " + messageBody;
                 telegramService.sendToTelegram(context, formattedMessage, new TelegramService.Callback() {
                     @Override
                     public void onSuccess() {
+                        SQLiteDatabase updateDb = dbHelper.getWritableDatabase();
                         ContentValues sentValues = new ContentValues();
                         sentValues.put(DatabaseHelper.COLUMN_SENT, 1);
-                        db.update(DatabaseHelper.TABLE_SMS, sentValues, DatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                        updateDb.update(DatabaseHelper.TABLE_SMS, sentValues, DatabaseHelper.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                        updateDb.close(); // Close the updateDb after updating
                     }
 
                     @Override
                     public void onFailure() {
-                        // Manejar el fallo si es necesario
+                        // Handle failure if necessary
                     }
                 });
             }
-            db.close();
+            db.close(); // Close the database after all operations
         }
     }
 }

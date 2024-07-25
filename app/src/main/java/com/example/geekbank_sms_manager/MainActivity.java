@@ -78,20 +78,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        logAllSms();
+
+        requestPermissions();
     }
 
     private void requestPermissions() {
+        List<String> permissionsNeeded = new ArrayList<>();
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, 1);
+            permissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
         }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, 1);
+            permissionsNeeded.add(Manifest.permission.READ_SMS);
         }
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
+            permissionsNeeded.add(Manifest.permission.INTERNET);
+        }
+
+        if (!permissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsNeeded.toArray(new String[0]), 1);
+        } else {
+            logAllSms(); // Llama al método logAllSms si ya se han concedido todos los permisos
         }
     }
 

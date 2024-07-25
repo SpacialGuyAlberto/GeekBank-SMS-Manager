@@ -15,13 +15,13 @@ public class TelegramService {
 
     private static final String TAG = "TelegramService";
     private static final String TELEGRAM_BOT_TOKEN = "7380701994:AAEjFku13cK8ZatzNch_E8uOZaiFze1IDAE";
-    private static final String TELEGRAM_CHAT_ID = "7364032510";
+    private static final String TELEGRAM_CHAT_ID = "-1002202415191";
 
     public void sendToTelegram(Context context, String message, Callback callback) {
         try {
             String encodedMessage = URLEncoder.encode(message, "UTF-8");
             String url = "https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/sendMessage?chat_id=" + TELEGRAM_CHAT_ID + "&text=" + encodedMessage;
-            Log.d(TAG, "URL: " + url); // Imprimir el URL para depuración
+            Log.d(TAG, "URL: " + url); // Print the URL for debugging
 
             RequestQueue queue = Volley.newRequestQueue(context);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
